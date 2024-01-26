@@ -972,7 +972,10 @@ static void state_collect(const struct shell *sh)
 
 			(void)sh->iface->api->read(sh->iface, buf,
 							sizeof(buf), &count);
-			if (count) {
+			// Patch to call the bypass function even when no data has been received
+			// on the interface. This still allows the bypass function to spit out
+			// data if it desires.
+			// if (count) {
 				z_flag_cmd_ctx_set(sh, true);
 				bypass(sh, buf, count);
 				z_flag_cmd_ctx_set(sh, false);
@@ -982,7 +985,7 @@ static void state_collect(const struct shell *sh)
 				} else {
 					continue;
 				}
-			}
+			// }
 
 			return;
 		}
