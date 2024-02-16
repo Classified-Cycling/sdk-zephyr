@@ -50,6 +50,10 @@ static void accumulate(struct qdec_nrfx_data *data, int32_t acc)
 	if (!overflow) {
 		data->acc += acc;
 	}
+	else 
+	{
+		LOG_WRN("Overflow");
+	}
 
 	irq_unlock(key);
 }
@@ -94,8 +98,8 @@ static int qdec_nrfx_channel_get(const struct device *dev,
 	val->val1 = (acc * FULL_ANGLE) / config->steps;
 	val->val2 = (acc * FULL_ANGLE) - (val->val1 * config->steps);
 	if (val->val2 != 0) {
-		val->val2 *= 1000000;
-		val->val2 /= config->steps;
+		int64_t val2 = (int64_t)val->val2 * 1000000LL;
+		val->val2 = (int32_t)(val2 / config->steps);
 	}
 
 	return 0;
@@ -264,8 +268,8 @@ static int qdec_nrfx_init(const struct device *dev)
 	NRF_DT_CHECK_NODE_HAS_PINCTRL_SLEEP(QDEC(idx));					     \
 	BUILD_ASSERT(QDEC_PROP(idx, steps) > 0,						     \
 		     "Wrong QDEC"#idx" steps setting in dts. Only positive number valid");   \
-	BUILD_ASSERT(QDEC_PROP(idx, steps) <= 2048,					     \
-		     "Wrong QDEC"#idx" steps setting in dts. Overflow possible");	     \
+	/* BUILD_ASSERT(QDEC_PROP(idx, steps) <= 2048, */				     \
+		     /* "Wrong QDEC"#idx" steps setting in dts. Overflow possible"); */	     \
 	static void irq_connect##idx(void)						     \
 	{										     \
 		IRQ_CONNECT(DT_IRQN(QDEC(idx)), DT_IRQ(QDEC(idx), priority),		     \
@@ -276,8 +280,8 @@ static int qdec_nrfx_init(const struct device *dev)
 	static struct qdec_nrfx_config qdec_##idx##_config = {				     \
 		.qdec = NRFX_QDEC_INSTANCE(idx),					     \
 		.config = {								     \
-			.reportper = NRF_QDEC_REPORTPER_40,				     \
-			.sampleper = NRF_QDEC_SAMPLEPER_2048US,				     \
+			.reportper = NRF_QDEC_REPORTPER_10,				     \
+			.sampleper = NRF_QDEC_SAMPLEPER_128US,				     \
 			.skip_gpio_cfg = true,						     \
 			.skip_psel_cfg = true,						     \
 			.ledpre  = QDEC_PROP(idx, led_pre),				     \
