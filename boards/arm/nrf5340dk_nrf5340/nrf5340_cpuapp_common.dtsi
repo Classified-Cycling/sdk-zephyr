@@ -19,6 +19,45 @@
 		zephyr,ieee802154 = &ieee802154;
 	};
 
+	/* Another dissapointment in nRF Connect SDK: wrong definition of LEDs 
+ 	 * in their development kit device-tree or incorrect assertion in CAF 
+ 	 * module which makes me have to overwrite the leds definition in the 
+	 * overlay file, otherwise the LEDs CAF module fails on 4 color 
+	 * definitions in the device tree. */
+	
+	led0: led0 {
+		compatible = "gpio-leds";
+		led_0: led_0 {
+			gpios = <&gpio0 28 GPIO_ACTIVE_LOW >;
+			label = "Green LED 0";
+		};
+	};
+
+	led1: led1 {
+		compatible = "gpio-leds";
+		led_1: led_1 {
+			gpios = <&gpio0 29 GPIO_ACTIVE_LOW >;
+			label = "Green LED 1";
+		};
+	};
+
+	led2: led2 {
+		compatible = "gpio-leds";
+		led_2: led_2 {
+			gpios = <&gpio0 30 GPIO_ACTIVE_LOW >;
+			label = "Green LED 2";
+		};
+	};
+
+	led3: led3 {
+		compatible = "gpio-leds";
+		led_3: led_3 {
+			gpios = <&gpio0 31 GPIO_ACTIVE_LOW >;
+			label = "Green LED 3";
+		};
+	};
+
+	/*
 	leds {
 		compatible = "gpio-leds";
 		led0: led_0 {
@@ -38,6 +77,7 @@
 			label = "Green LED 3";
 		};
 	};
+	*/
 
 	pwmleds {
 		compatible = "pwm-leds";
@@ -63,11 +103,13 @@
 			label = "Push button 3";
 			zephyr,code = <INPUT_KEY_2>;
 		};
+		/*
 		button3: button_3 {
 			gpios = <&gpio0 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "Push button 4";
 			zephyr,code = <INPUT_KEY_3>;
 		};
+		*/
 	};
 
 	arduino_header: connector {
@@ -128,7 +170,7 @@
 		sw0 = &button0;
 		sw1 = &button1;
 		sw2 = &button2;
-		sw3 = &button3;
+		/* sw3 = &button3; */
 		bootloader-led0 = &led0;
 		mcuboot-button0 = &button0;
 		mcuboot-led0 = &led0;

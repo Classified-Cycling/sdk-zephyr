@@ -280,7 +280,7 @@ static int qdec_nrfx_init(const struct device *dev)
 	static struct qdec_nrfx_config qdec_##idx##_config = {				     \
 		.qdec = NRFX_QDEC_INSTANCE(idx),					     \
 		.config = {								     \
-			.reportper = NRF_QDEC_REPORTPER_10,				     \
+			.reportper = NRF_QDEC_REPORTPER_1,				     \
 			.sampleper = NRF_QDEC_SAMPLEPER_128US,				     \
 			.skip_gpio_cfg = true,						     \
 			.skip_psel_cfg = true,						     \
