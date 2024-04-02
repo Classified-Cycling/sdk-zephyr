@@ -27,18 +27,12 @@ struct regulator_fixed_data {
 static int regulator_fixed_enable(const struct device *dev)
 {
 	const struct regulator_fixed_config *cfg = dev->config;
-	int ret;
 
 	if (!cfg->enable.port) {
 		return -ENOTSUP;
 	}
 
-	ret = gpio_pin_set_dt(&cfg->enable, 1);
-	if (ret < 0) {
-		return ret;
-	}
-
-	return 0;
+	return gpio_pin_set_dt(&cfg->enable, 1);
 }
 
 static int regulator_fixed_disable(const struct device *dev)
@@ -97,16 +91,9 @@ static int regulator_fixed_init(const struct device *dev)
 			return -ENODEV;
 		}
 
-		if (init_enabled) {
-			ret = gpio_pin_configure_dt(&cfg->enable, GPIO_OUTPUT_ACTIVE);
-			if (ret < 0) {
-				return ret;
-			}
-		} else {
-			ret = gpio_pin_configure_dt(&cfg->enable, GPIO_OUTPUT_INACTIVE);
-			if (ret < 0) {
-				return ret;
-			}
+		ret = gpio_pin_configure_dt(&cfg->enable, (init_enabled) ? GPIO_OUTPUT_ACTIVE : GPIO_OUTPUT_INACTIVE);
+		if (ret < 0) {
+			return ret;
 		}
 	}
 

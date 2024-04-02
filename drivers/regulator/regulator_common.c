@@ -33,7 +33,7 @@ int regulator_common_init(const struct device *dev, bool is_enabled)
 	const struct regulator_common_config *config = dev->config;
 	struct regulator_common_data *data = dev->data;
 	int32_t current_uv;
-	int ret;
+	int ret = 0;
 
 	if (config->initial_mode != REGULATOR_INITIAL_MODE_UNKNOWN) {
 		ret = regulator_set_mode(dev, config->initial_mode);
@@ -71,19 +71,25 @@ int regulator_common_init(const struct device *dev, bool is_enabled)
 		}
 	}
 
-	if (is_enabled) {
-		data->refcnt++;
-	} else if ((config->flags & REGULATOR_INIT_ENABLED) != 0U) {
-		ret = api->enable(dev);
-		if (ret < 0) {
-			return ret;
-		}
+	/* enable not supported (always on) */
+	if (api->enable == NULL) {
+		return 0;
+	}
 
-		regulator_delay(config->startup_delay_us);
+	if (is_enabled || ((config->flags & REGULATOR_INIT_ENABLED) != 0U)) {
 		data->refcnt++;
 	}
 
-	return 0;
+	if (data->refcnt == 1) {
+		ret = api->enable(dev);
+		if (ret < 0) {
+			data->refcnt--;
+		} else {
+			regulator_delay(config->startup_delay_us);
+		}
+	}
+
+	return ret;
 }
 
 int regulator_enable(const struct device *dev)
