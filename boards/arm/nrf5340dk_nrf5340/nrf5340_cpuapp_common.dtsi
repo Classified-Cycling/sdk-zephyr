@@ -103,13 +103,11 @@
 			label = "Push button 3";
 			zephyr,code = <INPUT_KEY_2>;
 		};
-		/*
 		button3: button_3 {
 			gpios = <&gpio0 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "Push button 4";
 			zephyr,code = <INPUT_KEY_3>;
 		};
-		*/
 	};
 
 	arduino_header: connector {
@@ -170,7 +168,7 @@
 		sw0 = &button0;
 		sw1 = &button1;
 		sw2 = &button2;
-		/* sw3 = &button3; */
+		sw3 = &button3;
 		bootloader-led0 = &led0;
 		mcuboot-button0 = &button0;
 		mcuboot-led0 = &led0;
