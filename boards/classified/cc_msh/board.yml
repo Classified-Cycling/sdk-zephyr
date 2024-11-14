@@ -1,0 +1,8 @@
+board:
+  name: cc_msh
+  vendor: classified
+  socs:
+  - name: 'nrf5340'
+    variants:
+    - name: 'ns'
+      cpucluster: 'cpuapp'

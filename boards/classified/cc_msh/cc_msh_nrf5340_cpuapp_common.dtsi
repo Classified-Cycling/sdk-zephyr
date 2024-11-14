@@ -1,0 +1,279 @@
+/*
+ * Copyright (c) 2024 Classified Cycling BV
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "cc_msh_nrf5340_cpuapp_common-pinctrl.dtsi"
+
+/ {
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		zephyr,bt-mon-uart = &uart0;
+		zephyr,bt-c2h-uart = &uart0;
+		zephyr,bt-hci-ipc = &ipc0;
+		watchdog0 = &wdt0;
+	};
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		spi-flash0 = &w25q16jv;
+		encoder = &qdec0;
+		motor = &motor0;
+		pwr-switch-mot = &pwr_switch_mot;
+		hall0 = &hall0;
+		adc = &adc;
+	};
+
+	zephyr,user {
+		io-channels = <&adc 0>;
+		ppi-trace-rtc = <&rtc0>;
+	};
+
+	/* This regulator controls PSW+2V8_ON onboard supply */
+	pwr_switch_2v8: pwr-switch-2v8 {
+		compatible = "regulator-fixed";
+		enable-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+		regulator-name = "pwr_switch_2v8";
+		regulator-boot-on;
+		startup-delay-us = <2000>;
+		off-on-delay-us = <2000>;
+	};
+
+	/* This regulator controls the on-board Motor supply */
+	pwr_switch_mot: pwr-switch-mot  {
+		compatible = "regulator-fixed";
+		enable-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
+		regulator-name = "pwr_switch_mot";
+		startup-delay-us = <0>;
+		off-on-delay-us = <8000>;
+	};
+
+	/* This regulator controls the motor driver nSLEEP GPIO */
+	motor_nsleep0: motor-nsleep0 {
+		compatible = "regulator-fixed";
+		enable-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		regulator-name = "motor_nsleep";
+		regulator-boot-on;
+		startup-delay-us = <0>;
+		off-on-delay-us = <0>;
+	};
+
+	motor0: motor_0 {
+		compatible = "pwm-motor";
+		pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>,
+		       <&pwm0 1 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+		pwm-names ="alpha", "beta";
+		regulator = <&pwr_switch_mot>;
+	};
+
+	inputs {
+		compatible = "cc-input";
+		hall0: hall_0 {
+			gpios = <&gpio1 5 (GPIO_PUSH_PULL)>;
+			label = "Hall sensor 0";
+		};
+	};
+
+	user_dbg_pin0: user-dbg-pin0 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+	user_dbg_pin1: user-dbg-pin1 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+	user_dbg_pin2: user-dbg-pin2 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+	user_dbg_pin3: user-dbg-pin3 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+
+&qdec0 {
+	status = "okay";
+	pinctrl-0 = <&qdec0_default>;
+	pinctrl-1 = <&qdec0_sleep>;
+	pinctrl-names = "default", "sleep";
+	// steps = <1200>;  // For Tronsun 12GFN30-100-06150E (3 PPR x 100:1)
+	steps = <2592>;  // For Zhaowei ZWMD012012-216E (3 PPR x 216:1)
+	// steps = <2400>;  // For Tronsun 12GRN30-199-06100E (3 PPR x 199:1)
+	// steps = <2520>;  // For TT-GM12-N30VA (3 PPR x 210:1)
+	led-pre = <0>;  // This must be set to zero since we're not using an LED-based encoder
+};
+
+&qdec1 {
+	status = "okay";
+	pinctrl-0 = <&qdec1_default>;
+	pinctrl-1 = <&qdec1_sleep>;
+	pinctrl-names = "default", "sleep";
+	steps = <80>;
+	led-pre = <0>;  // This must be set to zero since we're not using an LED-based encoder
+};
+
+&adc {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_6";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN6>; /* P0.27 */
+		zephyr,resolution = <12>;
+		zephyr,oversampling = <4>;
+	};
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&i2c1 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c1_default>;
+	pinctrl-1 = <&i2c1_sleep>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	as5600@36 {
+		status = "okay";
+		compatible = "ams,as5600";
+		reg = <0x36>;
+	};
+	/*
+	sht4x@44 {
+		status = "okay";
+		compatible = "sensirion,sht4x";
+		reg = <0x44>;
+		repeatability = <2>;
+	};
+	*/
+};
+
+&uart0 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&qspi {
+	status = "okay";
+	pinctrl-0 = <&qspi_default>;
+	pinctrl-1 = <&qspi_sleep>;
+	pinctrl-names = "default", "sleep";
+	w25q16jv: w25q16jv@0 {
+		compatible = "nordic,qspi-nor";
+		reg = <0>;
+		jedec-id = [ef 40 15];
+		sfdp-bfp = [
+			e5 20 f9 ff  ff ff ff 00  44 eb 08 6b  08 3b 42 bb
+			fe ff ff ff  ff ff 00 00  ff ff 40 eb  0c 20 0f 52
+			10 d8 00 00  36 02 a6 00  82 ea 14 b3  e9 63 76 33
+			7a 75 7a 75  f7 a2 d5 5c  19 f7 4d ff  e9 30 f8 80
+		];
+		size = <16777216>;
+		quad-enable-requirements = "S2B1v4";
+		readoc = "read4io";
+		writeoc = "pp4o";
+		sck-frequency = <50000000>;
+		has-dpd;
+		t-enter-dpd = <3000>;
+		t-exit-dpd = <3000>;
+	};
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x00010000>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+		};
+
+		slot0_ns_partition: partition@50000 {
+			label = "image-0-nonsecure";
+		};
+
+		slot1_partition: partition@80000 {
+			label = "image-1";
+		};
+
+		slot1_ns_partition: partition@c0000 {
+			label = "image-1-nonsecure";
+		};
+
+		/* 0xf0000 to 0xf7fff reserved for TF-M partitions */
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 0x00008000>;
+		};
+	};
+};
+
+&rtc0 {
+	status = "okay";
+};
+
+/ {
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		sram0_image: image@20000000 {
+			/* Zephyr image(s) memory */
+		};
+
+		sram0_s: image_s@20000000 {
+			/* Secure image memory */
+		};
+
+		sram0_ns: image_ns@20040000 {
+			/* Non-Secure image memory */
+		};
+	};
+};
+
+/* Include partition configuration file */
+#include "cc_msh_nrf5340_cpuapp_partition_conf.dtsi"
+#include "cc_msh_nrf5340_shared.dtsi"

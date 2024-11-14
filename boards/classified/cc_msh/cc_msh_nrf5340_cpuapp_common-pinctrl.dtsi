@@ -1,0 +1,127 @@
+/*
+ * Copyright (c) 2024 Classified Cycling BV
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+&pinctrl {
+	i2c1_default: i2c1_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 12)>,
+			        <NRF_PSEL(TWIM_SCL, 1, 13)>;
+			bias-disable;
+		};
+	};
+
+	i2c1_sleep: i2c1_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 12)>,
+			        <NRF_PSEL(TWIM_SCL, 1, 13)>;
+			bias-disable;
+			low-power-enable;
+		};
+	};
+
+	uart0_default: uart0_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 14)>;
+		};
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 1, 15)>;
+			bias-pull-up;
+		};
+	};
+
+	uart0_sleep: uart0_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 14)>,
+			        <NRF_PSEL(UART_RX, 1, 15)>;
+			low-power-enable;
+		};
+	};
+
+	qspi_default: qspi_default {
+		group1 {
+			psels = <NRF_PSEL(QSPI_SCK, 0, 17)>,
+			        <NRF_PSEL(QSPI_IO0, 0, 13)>,
+			        <NRF_PSEL(QSPI_IO1, 0, 14)>,
+			        <NRF_PSEL(QSPI_IO2, 0, 15)>,
+			        <NRF_PSEL(QSPI_IO3, 0, 16)>,
+			        <NRF_PSEL(QSPI_CSN, 0, 18)>;
+			nordic,drive-mode = <NRF_DRIVE_H0H1>;
+		};
+	};
+
+	qspi_sleep: qspi_sleep {
+		group1 {
+			psels = <NRF_PSEL(QSPI_SCK, 0, 17)>,
+			        <NRF_PSEL(QSPI_IO0, 0, 13)>,
+			        <NRF_PSEL(QSPI_IO1, 0, 14)>,
+			        <NRF_PSEL(QSPI_IO2, 0, 15)>,
+			        <NRF_PSEL(QSPI_IO3, 0, 16)>;
+			low-power-enable;
+		};
+		group2 {
+			psels = <NRF_PSEL(QSPI_CSN, 0, 18)>;
+			low-power-enable;
+			bias-pull-up;
+		};
+	};
+
+	pwm0_default: pwm0_default {
+		group1 {
+			/* Note: The proto B1 PCBA has a bug where the symbol pin mapping of IN1 and IN2 is inversed,
+			 * so we fixed it here */
+			psels = <NRF_PSEL(PWM_OUT0, 1, 1)>,
+			        <NRF_PSEL(PWM_OUT1, 1, 0)>;
+		};
+	};
+
+	pwm0_sleep: pwm0_sleep {
+		group1 {
+			/* Note: The proto B1 PCBA has a bug where the symbol pin mapping of IN1 and IN2 is inversed,
+			 * so we fixed it here */
+			psels = <NRF_PSEL(PWM_OUT0, 1, 1)>,
+			        <NRF_PSEL(PWM_OUT1, 1, 0)>;
+			low-power-enable;
+		};
+	};
+
+	qdec0_default: qdec0_default {
+		group1 {
+			/* Important: put QDEC_A always first, followed by QDEC_B */
+			psels = <NRF_PSEL(QDEC_A, 1, 8)>,
+			        <NRF_PSEL(QDEC_B, 1, 9)>,
+			        <NRF_PSEL_DISCONNECTED(QDEC_LED)>;
+		};
+	};
+
+	qdec0_sleep: qdec0_sleep {
+		group1 {
+			/* Important: put QDEC_A always first, followed by QDEC_B */
+			psels = <NRF_PSEL(QDEC_A, 1, 8)>,
+			        <NRF_PSEL(QDEC_B, 1, 9)>,
+			        <NRF_PSEL_DISCONNECTED(QDEC_LED)>;
+			low-power-enable;
+		};
+	};
+
+	qdec1_default: qdec1_default {
+		group1 {
+			/* Important: put QDEC_A always first, followed by QDEC_B */
+			psels = <NRF_PSEL(QDEC_A, 0, 21)>,
+			        <NRF_PSEL(QDEC_B, 0, 20)>,
+			        <NRF_PSEL_DISCONNECTED(QDEC_LED)>;
+		};
+	};
+
+	qdec1_sleep: qdec1_sleep {
+		group1 {
+			/* Important: put QDEC_A always first, followed by QDEC_B */
+			psels = <NRF_PSEL(QDEC_A, 0, 21)>,
+			        <NRF_PSEL(QDEC_B, 0, 20)>,
+			        <NRF_PSEL_DISCONNECTED(QDEC_LED)>;
+			low-power-enable;
+		};
+	};
+};
