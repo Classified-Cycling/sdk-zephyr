@@ -56,7 +56,6 @@
 		compatible = "regulator-fixed";
 		enable-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
 		regulator-name = "motor_nsleep";
-		regulator-boot-on;
 		startup-delay-us = <0>;
 		off-on-delay-us = <0>;
 	};
