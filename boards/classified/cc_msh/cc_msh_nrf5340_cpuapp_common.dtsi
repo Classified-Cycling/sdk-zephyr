@@ -64,7 +64,7 @@
 		compatible = "pwm-motor";
 		pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>,
 		       <&pwm0 1 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
-		pwm-names ="alpha", "beta";
+		pwm-names = "alpha", "beta";
 		regulators = <&pwr_switch_mot>, <&motor_nsleep0>;
 	};
 
@@ -114,11 +114,10 @@
 	pinctrl-0 = <&qdec0_default>;
 	pinctrl-1 = <&qdec0_sleep>;
 	pinctrl-names = "default", "sleep";
-	// steps = <1200>;  // For Tronsun 12GFN30-100-06150E (3 PPR x 100:1)
-	// steps = <2592>;  // For Zhaowei ZWMD012012-216E (3 PPR x 216:1)
-	// steps = <2400>;  // For Tronsun 12GRN30-199-06100E (3 PPR x 199:1)
-	// steps = <2520>;  // For TT-GM12-N30VA (3 PPR x 210:1)
-	steps = <2000>;  // For getting around static assert with NCS v2.7.0 (TODO: Fix it!)
+	// steps = <1200>;  // For Tronsun 12GFN30-100-06150E (3 PPR x 100: 1)
+	steps = <2592>;  // For Zhaowei ZWMD012012-216E (3 PPR x 216: 1)
+	// steps = <2400>;  // For Tronsun 12GRN30-199-06100E (3 PPR x 199: 1)
+	// steps = <2520>;  // For TT-GM12-N30VA (3 PPR x 210: 1)
 	led-pre = <0>;  // This must be set to zero since we're not using an LED-based encoder
 };
 
@@ -178,7 +177,7 @@
 		reg = <0x44>;
 		repeatability = <2>;
 	};
-	*/
+	 */
 };
 
 &uart0 {
@@ -197,8 +196,8 @@
 	w25q16jv: w25q16jv@0 {
 		compatible = "nordic,qspi-nor";
 		reg = <0>;
-		jedec-id = [ ef 40 15 ];
-		sfdp-bfp = [ e5 20 f9 ff  ff ff ff 00  44 eb 08 6b  08 3b 42 bb fe ff ff ff  ff ff 00 00  ff ff 40 eb  0c 20 0f 52 10 d8 00 00  36 02 a6 00  82 ea 14 b3  e9 63 76 33 7a 75 7a 75  f7 a2 d5 5c  19 f7 4d ff  e9 30 f8 80 ];
+		jedec-id = [ ef 40 15  ];
+		sfdp-bfp = [ e5 20 f9 ff ff ff ff 00 44 eb 08 6b 08 3b 42 bb fe ff ff ff ff ff 00 00 ff ff 40 eb 0c 20 0f 52 10 d8 00 00 36 02 a6 00 82 ea 14 b3 e9 63 76 33 7a 75 7a 75 f7 a2 d5 5c 19 f7 4d ff e9 30 f8 80  ];
 		size = <16777216>;
 		quad-enable-requirements = "S2B1v4";
 		readoc = "read4io";
