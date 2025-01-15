@@ -140,6 +140,7 @@ circuitdojo	Circuit Dojo
 cirque	Cirque Corporation
 cirrus	Cirrus Logic, Inc.
 cisco	Cisco Systems, Inc.
+classified	Classified Cycling
 cloudengines	Cloud Engines, Inc.
 cnm	Chips&Media, Inc.
 cnxt	Conexant Systems, Inc.

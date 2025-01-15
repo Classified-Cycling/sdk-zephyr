@@ -1,0 +1,11 @@
+board:
+  name: cc_msh_v2
+  full_name: Classified Cycling Multispeed Hub v2
+  vendor: classified
+  socs:
+  - name: nrf54l15
+    variants:
+    - name: xip
+      cpucluster: cpuflpr
+    - name: ns
+      cpucluster: cpuapp
