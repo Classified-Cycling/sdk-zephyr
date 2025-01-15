@@ -1,0 +1,216 @@
+/*
+ * Copyright (c) 2025 Classified Cycling BV
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* This file is common to the secure and non-secure domain */
+
+#include "cc_msh_v2_common.dtsi"
+
+/ {
+	chosen {
+		zephyr,console = &uart20;
+		zephyr,shell-uart = &uart20;
+		zephyr,uart-mcumgr = &uart20;
+		zephyr,bt-mon-uart = &uart20;
+		zephyr,bt-c2h-uart = &uart20;
+		zephyr,flash-controller = &rram_controller;
+		zephyr,flash = &cpuapp_rram;
+		zephyr,canbus = &mcp2518fd;
+	};
+
+	aliases {
+		adc = &adc;
+		encoder = &qdec20;
+		motor = &motor0;
+		pwr-switch-mot = &pwr_switch_mot;
+		spi-flash0 = &w25q64jv;
+	};
+
+	zephyr,user {
+		io-channels = <&adc 0>;
+	};
+
+	can_phy0: can-phy0 {
+		compatible = "ti,tcan3414", "can-transceiver-gpio";
+		standby-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+		min-bitrate = <10000>;
+		max-bitrate = <8000000>;
+		#phy-cells = <0>;
+		status = "okay";
+	};
+
+	/* Regulator controlling the on-board +12VDC motor supply (TPS62148) */
+	pwr_switch_mot: pwr-switch-mot  {
+		compatible = "regulator-fixed";
+		enable-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+		regulator-name = "pwr_switch_mot";
+		startup-delay-us = <0>;
+		off-on-delay-us = <8000>;  // TODO: Validate if 8 ms is still correct
+	};
+
+	motor0: motor_0 {
+		compatible = "pwm-motor";
+		pwms = <&pwm20 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>,
+		       <&pwm20 1 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+		pwm-names ="alpha", "beta";
+		regulators = <&pwr_switch_mot>;
+	};
+};
+
+&adc {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_4"; /* V_ISENSE = 3.0 V max */
+		zephyr,reference = "ADC_REF_INTERNAL"; /* VREF = 0.9 V */
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN1>;
+		zephyr,resolution = <12>;
+		zephyr,oversampling = <4>;
+	};
+};
+
+&lfxo {
+	load-capacitors = "internal";
+	load-capacitance-femtofarad = <15500>;
+};
+
+&hfxo {
+	load-capacitors = "internal";
+	load-capacitance-femtofarad = <15000>;
+};
+
+&clock {
+	status = "okay";
+};
+
+&cpuapp_sram {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpiote30 {
+	status = "okay";
+};
+
+&grtc {
+	owned-channels = <0 1 2 3 4 5 6 7 8 9 10 11>;
+	/* Channels 7-11 reserved for Zero Latency IRQs, 3-4 for FLPR */
+	child-owned-channels = <3 4 7 8 9 10 11>;
+	status = "okay";
+};
+
+&pwm20 {
+	status = "okay";
+	pinctrl-0 = <&pwm20_default>;
+	pinctrl-1 = <&pwm20_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&qdec20 {
+	status = "okay";
+	pinctrl-0 = <&qdec20_default>;
+	pinctrl-1 = <&qdec20_sleep>;
+	pinctrl-names = "default", "sleep";
+	led-pre = <0>; /* Must be set to zero for a non-LED based encoder. */
+	// steps = <1200>;  // For Tronsun 12GFN30-100-06150E (3 PPR x 100: 1)
+	// steps = <2400>;  // For Tronsun 12GRN30-199-06100E (3 PPR x 199: 1)
+	// steps = <2520>;  // For TT-GM12-N30VA (3 PPR x 210: 1)
+	steps = <2592>;  // For Zhaowei ZWMD012012-216E (3 PPR x 216: 1)
+};
+
+&qdec21 {
+	status = "okay";
+	pinctrl-0 = <&qdec21_default>;
+	pinctrl-1 = <&qdec21_sleep>;
+	pinctrl-names = "default", "sleep";
+	led-pre = <0>; /* Must be set to zero for a non-LED based encoder. */
+	steps = <80>;
+};
+
+&radio {
+	status = "okay";
+};
+
+&regulators {
+	status = "okay";
+};
+
+&spi00 {
+	status = "okay";
+	cs-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>,
+	           <&gpio2 2 GPIO_ACTIVE_LOW>,
+	           <&gpio2 5 GPIO_ACTIVE_LOW>;
+	pinctrl-0 = <&spi00_default>;
+	pinctrl-1 = <&spi00_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	bmi323: bmi323@0 {
+		compatible = "bosch,bmi323";
+		reg = <0>;
+		status = "okay";
+		spi-max-frequency = <8000000>; /* 8 MHz */
+		int-gpios = <&gpio1 9 0>; /* Zephyr driver maps all interrupts to INT1 */
+	};
+
+	mcp2518fd: mcp2518fd@1 {
+		compatible = "microchip,mcp251xfd";
+		reg = <1>;
+		status = "okay";
+		spi-max-frequency = <8000000>; /* 8 MHz */
+		int-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+		osc-freq = <40000000>; /* 40 MHz */
+		phys = <&can_phy0>;
+	};
+
+	w25q64jv: w25q64jv@2 {
+		compatible = "jedec,spi-nor";
+		reg = <2>;
+		status = "okay";
+		spi-max-frequency = <8000000>; /* 8 MHz */
+		size = <DT_SIZE_M(64)>; /* 64 Mbits */
+		jedec-id = [ef 40 17];
+		has-dpd;
+		t-enter-dpd = <3500>;
+		t-exit-dpd = <3500>;
+		wp-gpios = <&gpio2 3 GPIO_ACTIVE_LOW>;
+		hold-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&temp {
+	status = "okay";
+};
+
+&uart20 {
+	status = "okay";
+};
+
+&uicr {
+	nfct-pins-as-gpios;
+};
+
+&vregmain {
+	status = "okay";
+	regulator-initial-mode = <NRF5X_REG_MODE_DCDC>;
+};

@@ -1,0 +1,17 @@
+identifier: cc_msh/nrf5340/cpuapp_ns
+name: CC-MSH-NRF5340-Application-MCU-Non-Secure
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - xtools
+  - zephyr
+ram: 192
+flash: 192
+supported:
+  - gpio
+  - i2c
+  - pwm
+  - spi
+  - watchdog
+vendor: classified
