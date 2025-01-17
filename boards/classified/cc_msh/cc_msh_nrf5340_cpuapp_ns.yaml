@@ -1,11 +1,12 @@
 identifier: cc_msh/nrf5340/cpuapp_ns
-name: CC-MSH-NRF5340-Application-MCU-Non-Secure
+name: CC-MSH-nRF5340-Application-MCU-Non-Secure
 type: mcu
 arch: arm
 toolchain:
   - gnuarmemb
   - xtools
   - zephyr
+sysbuild: true
 ram: 192
 flash: 192
 supported:

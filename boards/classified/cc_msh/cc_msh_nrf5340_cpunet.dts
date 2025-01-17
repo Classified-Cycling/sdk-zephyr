@@ -1,15 +1,18 @@
 /*
- * Copyright (c) 2024 Classified Cycling BV
+ * Copyright (c) 2025 Classified Cycling BV
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /dts-v1/;
+
 #include <nordic/nrf5340_cpunet_qkaa.dtsi>
+#include "cc_msh_common.dtsi"
 #include "cc_msh_nrf5340_cpunet-pinctrl.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
-	model = "Classified Cycling Multispeed Hub NRF5340 Network";
+	model = "Classified Cycling Multispeed Hub nRF5340 Network";
 	compatible = "classified,cc-msh-nrf5340-cpunet";
 
 	chosen {
@@ -22,6 +25,10 @@
 		zephyr,sram = &sram1;
 		zephyr,flash = &flash1;
 		zephyr,code-partition = &slot0_partition;
+	};
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
 		watchdog0 = &wdt0;
 	};
 };
@@ -74,6 +81,5 @@
 	};
 };
 
-/* Include shared RAM configuration file */
-#include "cc_msh_nrf5340_shared_sram_planning_conf.dtsi"
-#include "cc_msh_nrf5340_shared.dtsi"
+/* Include default shared RAM configuration file */
+#include <common/nordic/nrf5340_shared_sram_partition.dtsi>

@@ -1,11 +1,12 @@
 identifier: cc_msh/nrf5340/cpuapp
-name: CC-MSH-NRF5340-Application-MCU
+name: CC-MSH-nRF5340-Application-MCU
 type: mcu
 arch: arm
 toolchain:
   - gnuarmemb
   - xtools
   - zephyr
+sysbuild: true
 ram: 448
 flash: 1024
 supported:
