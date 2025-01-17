@@ -1,5 +1,6 @@
 board:
   name: cc_msh
+  full_name: Classified Cycling Multispeed Hub
   vendor: classified
   socs:
   - name: 'nrf5340'
