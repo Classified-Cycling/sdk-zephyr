@@ -26,6 +26,7 @@
 		motor = &motor0;
 		pwr-switch-mot = &pwr_switch_mot;
 		spi-flash0 = &w25q64jv;
+		wheel = &qdec21;
 	};
 
 	zephyr,user {
