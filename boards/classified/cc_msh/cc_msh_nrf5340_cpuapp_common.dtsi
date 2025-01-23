@@ -100,6 +100,7 @@
 		pwr-switch-mot = &pwr_switch_mot;
 		spi-flash0 = &w25q16jv;
 		watchdog0 = &wdt0;
+		wheel = &qdec1;
 	};
 };
 
