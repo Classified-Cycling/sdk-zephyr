@@ -146,7 +146,7 @@
 	pinctrl-1 = <&qdec21_sleep>;
 	pinctrl-names = "default", "sleep";
 	led-pre = <0>; /* Must be set to zero for a non-LED based encoder. */
-	steps = <80>;
+	steps = <48>;
 };
 
 &radio {
