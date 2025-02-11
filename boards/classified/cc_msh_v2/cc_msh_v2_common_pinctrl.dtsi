@@ -94,19 +94,17 @@
 
 	/omit-if-no-ref/ qdec21_default: qdec21_default {
 		group1 {
-			/* Important: put QDEC_A always first, followed by QDEC_B */
-			psels = <NRF_PSEL(QDEC_A, 1, 13)>,
-			        <NRF_PSEL(QDEC_B, 1, 14)>,
-			        <NRF_PSEL_DISCONNECTED(QDEC_LED)>;
+			psels = <NRF_PSEL_DISCONNECTED(QDEC_LED)>,
+			        <NRF_PSEL(QDEC_A, 1, 14)>,
+			        <NRF_PSEL(QDEC_B, 1, 13)>;
 		};
 	};
 
 	/omit-if-no-ref/ qdec21_sleep: qdec21_sleep {
 		group1 {
-			/* Important: put QDEC_A always first, followed by QDEC_B */
-			psels = <NRF_PSEL(QDEC_A, 1, 13)>,
-			        <NRF_PSEL(QDEC_B, 1, 14)>,
-			        <NRF_PSEL_DISCONNECTED(QDEC_LED)>;
+			psels = <NRF_PSEL_DISCONNECTED(QDEC_LED)>,
+			        <NRF_PSEL(QDEC_A, 1, 14)>,
+			        <NRF_PSEL(QDEC_B, 1, 13)>;
 			low-power-enable;
 		};
 	};
