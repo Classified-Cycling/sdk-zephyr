@@ -7,6 +7,7 @@
 /* This file is common to the secure and non-secure domain */
 
 #include "cc_msh_v2_common.dtsi"
+#include <zephyr/dt-bindings/led/led.h>
 
 / {
 	chosen {
@@ -23,6 +24,7 @@
 	aliases {
 		adc = &adc;
 		encoder = &qdec20;
+		led-strip = &led_strip;
 		motor = &motor0;
 		pwr-switch-mot = &pwr_switch_mot;
 		spi-flash0 = &w25q64jv;
@@ -158,13 +160,14 @@
 };
 
 &spi00 {
-	status = "okay";
+	compatible = "nordic,nrf-spim";
 	cs-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>,
 	           <&gpio2 2 GPIO_ACTIVE_LOW>,
 	           <&gpio2 5 GPIO_ACTIVE_LOW>;
 	pinctrl-0 = <&spi00_default>;
 	pinctrl-1 = <&spi00_sleep>;
 	pinctrl-names = "default", "sleep";
+	status = "okay";
 
 	bmi323: bmi323@0 {
 		compatible = "bosch,bmi323";
@@ -197,6 +200,29 @@
 		t-exit-dpd = <3500>;
 		wp-gpios = <&gpio2 3 GPIO_ACTIVE_LOW>;
 		hold-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&spi30 {
+	compatible = "nordic,nrf-spim";
+	/delete-property/ cs-gpios;
+	pinctrl-0 = <&spi30_default>;
+	pinctrl-1 = <&spi30_sleep>;
+	pinctrl-names = "default", "sleep";
+	status = "okay";
+	led_strip: ws2812@0 {
+		compatible = "worldsemi,ws2812-spi";
+		/* SPI */
+		reg = <0>; /* ignored, but necessary for SPI bindings */
+		spi-max-frequency = <4000000>;
+		/* WS2812 */
+		chain-length = <1>; /* arbitrary; change at will */
+		color-mapping = <LED_COLOR_ID_GREEN
+		                 LED_COLOR_ID_RED
+		                 LED_COLOR_ID_BLUE>;
+		/* At 4 MHz, 1 bit is 250 ns, so 3 bits is 750 ns. */
+		spi-one-frame = <0x70>;
+		spi-zero-frame = <0x40>;
 	};
 };
 
