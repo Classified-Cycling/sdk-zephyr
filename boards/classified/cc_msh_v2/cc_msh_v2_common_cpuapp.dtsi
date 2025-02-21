@@ -57,7 +57,7 @@
 		compatible = "pwm-motor";
 		pwms = <&pwm20 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>,
 		       <&pwm20 1 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
-		pwm-names ="alpha", "beta";
+		pwm-names = "alpha", "beta";
 		regulators = <&pwr_switch_mot>;
 	};
 };
@@ -139,7 +139,8 @@
 	// steps = <1200>;  // For Tronsun 12GFN30-100-06150E (3 PPR x 100: 1)
 	// steps = <2400>;  // For Tronsun 12GRN30-199-06100E (3 PPR x 199: 1)
 	// steps = <2520>;  // For TT-GM12-N30VA (3 PPR x 210: 1)
-	steps = <2592>;  // For Zhaowei ZWMD012012-216E (3 PPR x 216: 1)
+	// steps = <2592>;  // For Zhaowei ZWMD012012-216E (3 PPR x 216: 1)
+	steps = <2100>; // For B3 gearbox (2^3 PPR x 175: 1)
 };
 
 &qdec21 {
@@ -218,8 +219,8 @@
 		/* WS2812 */
 		chain-length = <1>; /* arbitrary; change at will */
 		color-mapping = <LED_COLOR_ID_GREEN
-		                 LED_COLOR_ID_RED
-		                 LED_COLOR_ID_BLUE>;
+		LED_COLOR_ID_RED
+		LED_COLOR_ID_BLUE>;
 		/* At 4 MHz, 1 bit is 250 ns, so 3 bits is 750 ns. */
 		spi-one-frame = <0x70>;
 		spi-zero-frame = <0x40>;
